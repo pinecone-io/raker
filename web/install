@@ -1,0 +1,58 @@
+#!/bin/sh
+set -e
+
+echo "Installing Raker CLI..."
+
+# Detect OS
+OS="$(uname -s)"
+case "$OS" in
+    Linux*)     OS_LOWER="linux" ;;
+    Darwin*)    OS_LOWER="macos" ;;
+    CYGWIN*|MINGW*|MSYS*) echo "Windows is currently not supported by this script. Please use Cargo."; exit 1 ;;
+    *)          echo "Unsupported OS: $OS"; exit 1 ;;
+esac
+
+# Detect Architecture
+ARCH="$(uname -m)"
+case "$ARCH" in
+    x86_64|amd64)   ARCH_LOWER="amd64" ;;
+    aarch64|arm64)  ARCH_LOWER="arm64" ;;
+    *)              echo "Unsupported architecture: $ARCH"; exit 1 ;;
+esac
+
+ASSET_NAME="raker-${OS_LOWER}-${ARCH_LOWER}"
+REPO="pinecone-io/raker"
+
+echo "Fetching latest release from $REPO for $ASSET_NAME..."
+
+# Use GitHub API to get the download URL for the asset
+RELEASE_JSON=$(curl -sL "https://api.github.com/repos/${REPO}/releases/latest")
+DOWNLOAD_URL=$(echo "$RELEASE_JSON" | grep -o "https://github.com/[^\"]*" | grep "/releases/download/" | grep "$ASSET_NAME" | head -n 1)
+
+if [ -z "$DOWNLOAD_URL" ]; then
+    echo "Error: Could not find release asset '$ASSET_NAME' for the latest release."
+    echo "Please visit https://github.com/${REPO}/releases to install manually."
+    exit 1
+fi
+
+TMP_DIR=$(mktemp -d)
+DOWNLOAD_PATH="$TMP_DIR/raker"
+
+echo "Downloading $DOWNLOAD_URL..."
+curl -sL "$DOWNLOAD_URL" -o "$DOWNLOAD_PATH"
+chmod +x "$DOWNLOAD_PATH"
+
+DEST_DIR="/usr/local/bin"
+DEST_PATH="$DEST_DIR/raker"
+
+echo "Installing binary to $DEST_PATH..."
+if [ -w "$DEST_DIR" ]; then
+    mv "$DOWNLOAD_PATH" "$DEST_PATH"
+else
+    echo "Sudo privileges required to install to $DEST_DIR"
+    sudo mv "$DOWNLOAD_PATH" "$DEST_PATH"
+fi
+
+rm -rf "$TMP_DIR"
+
+echo "Raker installed successfully! Run 'raker --help' to get started."
