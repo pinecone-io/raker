@@ -29,7 +29,12 @@
             </p>
             <div class="d-flex justify-content-center mb-4">
                 <div class="bg-dark text-white px-4 py-2 rounded d-inline-flex align-items-center">
-                    <code class="text-white fs-5">curl -sL https://raker.sh/install | sh</code>
+                    <code id="install-cmd" class="text-white fs-5 pe-3">curl -sL https://raker.sh/install | sh</code>
+                    <button class="btn btn-outline-light btn-sm ms-2" onclick="copyInstallCmd()" title="Copy to clipboard">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2Zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H6ZM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1H2Z"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
@@ -67,5 +72,23 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function copyInstallCmd() {
+        const cmd = document.getElementById("install-cmd").innerText;
+        navigator.clipboard.writeText(cmd).then(() => {
+            // Optional: Provide minimal visual feedback
+            const btn = document.querySelector(".btn-outline-light");
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
+                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+            </svg>`;
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+        });
+    }
+</script>
 </body>
 </html>
