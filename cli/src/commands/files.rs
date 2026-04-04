@@ -8,8 +8,11 @@ fn get_all_files(dir: &Path) -> Result<Vec<PathBuf>> {
     let mut files = Vec::new();
     if dir.is_file() {
         files.push(dir.to_path_buf());
-    } else if dir.is_dir() {
-        let walker = ignore::WalkBuilder::new(dir).hidden(false).build();
+    } else     if dir.is_dir() {
+        let walker = ignore::WalkBuilder::new(dir)
+            .hidden(false)
+            .filter_entry(|e| e.file_name() != ".git")
+            .build();
         for result in walker {
             match result {
                 Ok(entry) => {
