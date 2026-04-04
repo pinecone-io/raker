@@ -104,7 +104,7 @@ pub async fn upload(
     if json {
         output::print_json(&results);
     } else if results.len() > 1 {
-        println!("All {} files uploaded successfully.", results.len());
+        println!("{} files uploaded successfully.", results.len());
     }
 
     Ok(())
