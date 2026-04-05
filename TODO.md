@@ -1,6 +1,6 @@
 # Raker - Project TODOs & Roadmap
 
-This document outlines the planned features and roadmap for the Raker CLI, which acts as a Reviewer Agent for cross-referencing code, design, documentation, and security against cloud-scale context.
+This document outlines the planned features and roadmap for the Raker CLI, which acts as a Reviewer Agent for reviewing code, design, documentation, and security against cloud-scale context.
 
 ## 1. Context Building (The Foundation)
 To perform accurate reviews, Raker needs access to the org-wide knowledge base in Autocontext.
