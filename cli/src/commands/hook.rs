@@ -13,7 +13,7 @@ pub fn install() -> Result<()> {
 
     let script = r#"#!/bin/sh
 # Raker pre-commit hook
-# This intercepts commits to verify them against organizational context
+# This intercepts commits to review them against organizational context
 
 # Check if raker is available
 if ! command -v raker >/dev/null 2>&1; then

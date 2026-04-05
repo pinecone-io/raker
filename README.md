@@ -1,11 +1,11 @@
 # Raker - Your intelligent, context-aware Reviewer Agent
 
-Raker is a powerful CLI used by AI and humans to review their work against cloud-scale context and complete complex tasks. Built on Pinecone's Autocontext infrastructure, it acts as your comprehensive Reviewer Agent.
+Raker is a powerful CLI used by AI and humans to review their work against cloud-scale context. Built on Pinecone's Autocontext infrastructure, it acts as your comprehensive Reviewer Agent.
 
 ## Core Capabilities
 
 - **Code Review:** Apply organizational code intelligence to ensure commits align with internal best practices and your specific tech stack. Flag known anti-patterns, past bugs, and architectural deviations before they reach production.
-- **Design Review:** Automatically verify code and assets against your company's design system and brand guidelines to maintain visual and experiential consistency.
+- **Design Review:** Automatically review code and assets against your company's design system and brand guidelines to maintain visual and experiential consistency.
 - **Doc Review:** Analyze extensive internal documentation to identify style deviations, factual inconsistencies, overlapping content, and potential plagiarism.
 - **Security Review:** Proactively surface vulnerabilities and security risks by referencing historical incidents, unpatched flaws, and unstructured organizational security guidelines.
 
