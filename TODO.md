@@ -14,7 +14,7 @@ The primary capability is using context to review local files.
 - [ ] **Diff Reviews:** Add support for `raker review --git-diff` to review only uncommitted or staged changes rather than entire files.
 
 ## 3. Automation & Agentic Integration
-Raker is built to be used by both humans and AI agents.
+Raker is built to be used by both humans and AI.
 - [x] **JSON Output:** Support `--json` flag for machine-readable output.
 - [ ] **CI/CD Integration:** Provide actions/scripts to easily integrate `raker review` into GitHub Actions or GitLab CI to fail builds on critical anti-patterns or vulnerabilities.
 - [ ] **Report Generation:** Add functionality to output review results as standard markdown reports or formats like SARIF for security tools.
