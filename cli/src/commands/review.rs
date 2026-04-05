@@ -31,11 +31,14 @@ pub async fn run(
             .args(["diff", "HEAD", path_str])
             .output()
             .context("Failed to execute git diff")?;
-            
+
         if !output.status.success() {
-            anyhow::bail!("git diff failed: {}", String::from_utf8_lossy(&output.stderr));
+            anyhow::bail!(
+                "git diff failed: {}",
+                String::from_utf8_lossy(&output.stderr)
+            );
         }
-        
+
         let diff_text = String::from_utf8_lossy(&output.stdout).to_string();
         if diff_text.trim().is_empty() {
             println!("No diff found to review.");
@@ -74,10 +77,12 @@ pub async fn run(
                     if !symbols.imports.is_empty() || !symbols.definitions.is_empty() {
                         extracted_symbols_text.push_str(&format!("- File {}:\n", path.display()));
                         if !symbols.imports.is_empty() {
-                            extracted_symbols_text.push_str(&format!("  Imports: {:?}\n", symbols.imports));
+                            extracted_symbols_text
+                                .push_str(&format!("  Imports: {:?}\n", symbols.imports));
                         }
                         if !symbols.definitions.is_empty() {
-                            extracted_symbols_text.push_str(&format!("  Definitions: {:?}\n", symbols.definitions));
+                            extracted_symbols_text
+                                .push_str(&format!("  Definitions: {:?}\n", symbols.definitions));
                         }
                     }
                 }
@@ -106,7 +111,7 @@ pub async fn run(
 
     // Initial analysis prompt
     let r_type = review_type.unwrap_or("general (infer from content)");
-    
+
     let json_instruction = if json {
         "Because the user requested JSON output, your FINAL_REVIEW must be EXACTLY a valid JSON object matching this schema:\n\
         { \"status\": \"pass|fail\", \"severity\": \"high|medium|low|none\", \"comments\": [{\"line\": 42, \"message\": \"...\"}] }\n\
@@ -194,15 +199,17 @@ pub async fn run(
                     "Context Result (JSON):\n{}",
                     context_result
                 )));
-            } else if content.contains("FINAL_REVIEW:") || (!content.contains("QUERY_CONTEXT:") && !content.trim().is_empty()) {
+            } else if content.contains("FINAL_REVIEW:")
+                || (!content.contains("QUERY_CONTEXT:") && !content.trim().is_empty())
+            {
                 let final_review = content.replace("FINAL_REVIEW:", "").trim().to_string();
-                
+
                 if json {
                     // Try parsing it
                     let parsed: Result<serde_json::Value, _> = serde_json::from_str(&final_review);
                     if let Ok(json_val) = parsed {
                         println!("{}", serde_json::to_string_pretty(&json_val).unwrap());
-                        
+
                         // CI/CD Exit logic
                         if let Some(status) = json_val.get("status").and_then(|s| s.as_str()) {
                             if status.eq_ignore_ascii_case("fail") {
@@ -213,7 +220,8 @@ pub async fn run(
                     } else {
                         // Self correction
                         if retries < 1 {
-                            chat_req = chat_req.append_message(ChatMessage::assistant(content.clone()));
+                            chat_req =
+                                chat_req.append_message(ChatMessage::assistant(content.clone()));
                             chat_req = chat_req.append_message(ChatMessage::user(
                                 "Your output was not valid JSON. Fix it and output ONLY valid JSON matching the schema.".to_string()
                             ));
@@ -221,7 +229,10 @@ pub async fn run(
                             continue;
                         } else {
                             // Give up
-                            eprintln!("Failed to generate valid JSON review. Raw output:\n{}", final_review);
+                            eprintln!(
+                                "Failed to generate valid JSON review. Raw output:\n{}",
+                                final_review
+                            );
                             std::process::exit(2);
                         }
                     }

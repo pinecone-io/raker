@@ -6,7 +6,7 @@ mod types;
 
 use clap::{Parser, Subcommand};
 
-/// Raker CLI — Reviewer Agent CLI.
+/// Raker CLI — Your intelligent, context-aware Reviewer Agent.
 #[derive(Parser)]
 #[command(name = "raker", version, about = "Your intelligent, context-aware Reviewer Agent", long_about = None)]
 struct Cli {
