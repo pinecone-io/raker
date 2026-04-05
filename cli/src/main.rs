@@ -73,6 +73,9 @@ enum Commands {
         /// Type of review to perform (code, design, docs, security). If omitted, the agent will infer the type based on context.
         #[arg(long)]
         review_type: Option<String>,
+        /// Review only the git diff
+        #[arg(long)]
+        diff: bool,
     },
 
     /// Show the CLI version
@@ -178,9 +181,10 @@ async fn run() -> anyhow::Result<()> {
             path,
             context_id,
             review_type,
+            diff,
         }) => {
             let aid = config::resolve_context_id(context_id.as_deref())?;
-            commands::review::run(&aid, &path, review_type.as_deref(), json).await
+            commands::review::run(&aid, &path, review_type.as_deref(), diff, json).await
         }
         Some(Commands::Version) => {
             let version = env!("CARGO_PKG_VERSION");
