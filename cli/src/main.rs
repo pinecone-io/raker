@@ -8,7 +8,7 @@ use clap::{Parser, Subcommand};
 
 /// Raker CLI — Reviewer Agent CLI.
 #[derive(Parser)]
-#[command(name = "raker", version, about = "Reviewer Agent CLI for checking code, design, docs, and security against private context", long_about = None)]
+#[command(name = "raker", version, about = "Your intelligent, context-aware Reviewer Agent", long_about = None)]
 struct Cli {
     /// Output JSON instead of human-readable text (for LLM/script consumption)
     #[arg(long, global = true)]

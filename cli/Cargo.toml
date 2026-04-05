@@ -2,7 +2,7 @@
 name = "raker"
 version = "0.1.0"
 edition = "2021"
-description = "Reviewer Agent CLI for checking code, design, docs, and security against private context"
+description = "Your intelligent, context-aware Reviewer Agent"
 
 [[bin]]
 name = "raker"
