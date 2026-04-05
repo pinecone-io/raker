@@ -38,23 +38,6 @@ enum Commands {
     #[command(subcommand)]
     Context(ContextCmd),
 
-    /// Sync a directory to the remote context and trigger curation
-    Sync {
-        /// The directory to sync (defaults to current directory)
-        #[arg(default_value = ".")]
-        dir: String,
-        /// Context ID (optional if active context is set)
-        #[arg(long)]
-        context_id: Option<String>,
-    },
-
-    /// Trigger build/learn process
-    Learn {
-        /// Context ID (optional if active context is set)
-        #[arg(long)]
-        context_id: Option<String>,
-    },
-
     /// Status of current context and system
     Status {
         /// Context ID (optional if active context is set)
@@ -161,17 +144,6 @@ async fn run() -> anyhow::Result<()> {
             ContextCmd::Delete { id } => commands::contexts::delete(&id).await,
             ContextCmd::Switch { id } => commands::contexts::switch(&id, json).await,
         },
-        Some(Commands::Sync { dir, context_id }) => {
-            let aid = config::resolve_context_id(context_id.as_deref())?;
-            println!("Syncing directory '{}' to context '{}'...", dir, aid);
-            commands::files::upload(&aid, &dir, None, json).await?;
-            println!("Triggering curation task...");
-            commands::tasks::curate(&aid, json).await
-        }
-        Some(Commands::Learn { context_id }) => {
-            let aid = config::resolve_context_id(context_id.as_deref())?;
-            commands::tasks::build(&aid, json).await
-        }
         Some(Commands::Status { context_id: _ }) => {
             // Display active context and global stats
             let _ = commands::contexts::which(json).await;

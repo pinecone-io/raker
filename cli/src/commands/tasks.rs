@@ -30,29 +30,3 @@ pub async fn retrieve(
     output::print_task(&task, json);
     Ok(())
 }
-
-pub async fn curate(context_id: &str, json: bool) -> Result<()> {
-    let cfg = load_config()?;
-    let client = RakerClient::new(&cfg)?;
-    let result = client.create_curate_task(context_id).await?;
-
-    if json {
-        output::print_json(&result);
-    } else {
-        println!("Curate task scheduled successfully.");
-    }
-    Ok(())
-}
-
-pub async fn build(context_id: &str, json: bool) -> Result<()> {
-    let cfg = load_config()?;
-    let client = RakerClient::new(&cfg)?;
-    let result = client.create_build_task(context_id).await?;
-
-    if json {
-        output::print_json(&result);
-    } else {
-        println!("Build loop started successfully.");
-    }
-    Ok(())
-}
