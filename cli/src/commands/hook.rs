@@ -1,5 +1,6 @@
 use anyhow::{Context, Result};
 use std::fs;
+#[cfg(unix)]
 use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
 
@@ -35,9 +36,12 @@ exit 0
 
     fs::write(&pre_commit_path, script).context("Failed to write pre-commit hook")?;
 
-    let mut perms = fs::metadata(&pre_commit_path)?.permissions();
-    perms.set_mode(0o755);
-    fs::set_permissions(&pre_commit_path, perms).context("Failed to make hook executable")?;
+    #[cfg(unix)]
+    {
+        let mut perms = fs::metadata(&pre_commit_path)?.permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&pre_commit_path, perms).context("Failed to make hook executable")?;
+    }
 
     println!("Successfully installed Raker pre-commit hook at .git/hooks/pre-commit");
     Ok(())
