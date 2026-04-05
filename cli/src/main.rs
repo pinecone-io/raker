@@ -5,11 +5,10 @@ mod output;
 mod types;
 
 use clap::{Parser, Subcommand};
-use std::io::{self, Write};
 
-    /// Raker CLI — manage contexts and tasks via the Autocontext API.
+    /// Raker CLI — Reviewer Agent CLI.
 #[derive(Parser)]
-#[command(name = "raker", version, about, long_about = None)]
+#[command(name = "raker", version, about = "Reviewer Agent CLI for checking code, design, docs, and security against private context", long_about = None)]
 struct Cli {
     /// Output JSON instead of human-readable text (for LLM/script consumption)
     #[arg(long, global = true)]
@@ -63,6 +62,19 @@ enum Commands {
         context_id: Option<String>,
     },
 
+    /// Review the specified file or directory against the active context
+    Review {
+        /// The file or directory to review (defaults to current directory)
+        #[arg(default_value = ".")]
+        path: String,
+        /// Context ID (optional if active context is set)
+        #[arg(long)]
+        context_id: Option<String>,
+        /// Type of review to perform (code, design, docs, security). If omitted, the agent will infer the type based on context.
+        #[arg(long)]
+        review_type: Option<String>,
+    },
+
     /// Show the CLI version
     Version,
 }
@@ -112,40 +124,9 @@ fn prompt_secret(prompt: &str) -> String {
     input.trim().to_string()
 }
 
-/// Run an interactive loop for retrieving answers.
-async fn interactive_loop(json: bool) -> anyhow::Result<()> {
-    let aid = config::resolve_context_id(None)?;
-    println!("Raker Interactive Mode (Context: {})", aid);
-    println!("Type 'exit' or 'quit' to leave.");
-
-    loop {
-        print!("raker> ");
-        io::stdout().flush()?;
-
-        let mut input = String::new();
-        if io::stdin().read_line(&mut input).is_err() {
-            break;
-        }
-
-        let input = input.trim();
-        if input.is_empty() {
-            continue;
-        }
-
-        if input.eq_ignore_ascii_case("exit") || input.eq_ignore_ascii_case("quit") {
-            break;
-        }
-
-        if let Err(e) = commands::tasks::retrieve(&aid, input, Some(false), json).await {
-            eprintln!("Error: {}", e);
-        }
-    }
-    Ok(())
-}
-
 async fn run() -> anyhow::Result<()> {
     let cli = Cli::parse();
-
+    
     let json = cli.json;
 
     match cli.command {
@@ -193,6 +174,14 @@ async fn run() -> anyhow::Result<()> {
             let _ = commands::contexts::which(json).await;
             commands::stats::global(json).await
         }
+        Some(Commands::Review {
+            path,
+            context_id,
+            review_type,
+        }) => {
+            let aid = config::resolve_context_id(context_id.as_deref())?;
+            commands::review::run(&aid, &path, review_type.as_deref(), json).await
+        }
         Some(Commands::Version) => {
             let version = env!("CARGO_PKG_VERSION");
             if json {
@@ -202,7 +191,13 @@ async fn run() -> anyhow::Result<()> {
             }
             Ok(())
         }
-        None => interactive_loop(json).await,
+        None => {
+            // Print help if no command is provided
+            use clap::CommandFactory;
+            let mut cmd = Cli::command();
+            cmd.print_help()?;
+            Ok(())
+        }
     }
 }
 

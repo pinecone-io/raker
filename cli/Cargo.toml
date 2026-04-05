@@ -2,7 +2,7 @@
 name = "raker"
 version = "0.1.0"
 edition = "2021"
-description = "CLI client for managing contextual intelligence in Autocontext"
+description = "Reviewer Agent CLI for checking code, design, docs, and security against private context"
 
 [[bin]]
 name = "raker"
@@ -19,4 +19,5 @@ anyhow = "1"
 chrono = { version = "0.4", features = ["serde"] }
 tabled = "0.17"
 ignore = "0.4.25"
+genai = "0.5.3"
 

@@ -1,6 +1,13 @@
-# Raker - Contextual Intelligence CLI
+# Raker - Reviewer Agent CLI
 
-Raker is a CLI product designed to help developers curate and manage contextual intelligence from any machine — local or remote — into Pinecone's Autocontext infrastructure.
+Raker is a powerful CLI designed to be used by AI Agents and humans to cross-reference outputs against private cloud-scale context to verify and complete complex tasks. Built on Pinecone's Autocontext infrastructure, it acts as your comprehensive Reviewer Agent.
+
+## Core Capabilities
+
+- **Code Review:** Org-wide Code Intelligence to help review code that aligns with the company best practices and stack. Understands every issue known so far, indexed all public repos of interest. Can alert and identify problems before they hit production.
+- **Design Review:** Check consistency of designs to stay on brand.
+- **Doc Review:** Cross Reference 1000s of documents to identify plagiarism, check facts, overlaps, style defects, etc.
+- **Security Review:** Cross Reference vulnerabilities and potential issues in unstructured environments.
 
 ## Getting Started
 
@@ -16,8 +23,6 @@ You can install the Raker CLI locally using the provided install script:
 ./scripts/install.sh
 ```
 
-This will build the project in release mode and install the `raker` binary into your Cargo bin directory (usually `~/.cargo/bin`), making it available in your terminal.
-
 Alternatively, you can build and install it directly with Cargo:
 
 ```bash
@@ -25,27 +30,23 @@ cd cli
 cargo install --path .
 ```
 
-### Building from Source
-
-To simply build the CLI without installing it globally:
-
-```bash
-./scripts/build.sh
-```
-
-The compiled binary will be located at `cli/target/release/raker`.
-
 ## Usage
 
-*(CLI commands and usage instructions will be documented here as features are implemented)*
+Use the `review` command to review the contents of a directory or file:
 
 ```bash
-raker --help
+# Review current directory
+raker review
+
+# Review a specific file
+raker review src/main.rs
 ```
+
+*(For more CLI commands, run `raker --help`)*
 
 ## Contributing
 
-We welcome contributions! Please review our [Repository Guidelines (AGENTS.md)](./AGENTS.md) before getting started. It contains important information about our coding standards, project structure, and commit message conventions.
+We welcome contributions! Please review our [Repository Guidelines (AGENTS.md)](./AGENTS.md) before getting started.
 
 ### Development Checks
 
