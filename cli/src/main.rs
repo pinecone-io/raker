@@ -6,7 +6,7 @@ mod types;
 
 use clap::{Parser, Subcommand};
 
-    /// Raker CLI — Reviewer Agent CLI.
+/// Raker CLI — Reviewer Agent CLI.
 #[derive(Parser)]
 #[command(name = "raker", version, about = "Reviewer Agent CLI for checking code, design, docs, and security against private context", long_about = None)]
 struct Cli {
@@ -126,7 +126,7 @@ fn prompt_secret(prompt: &str) -> String {
 
 async fn run() -> anyhow::Result<()> {
     let cli = Cli::parse();
-    
+
     let json = cli.json;
 
     match cli.command {

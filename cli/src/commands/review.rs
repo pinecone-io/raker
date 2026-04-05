@@ -67,7 +67,7 @@ pub async fn run(
     // Setup Gemini API Client via genai using environment variables
     let _api_key = std::env::var("GEMINI_API_KEY")
         .context("GEMINI_API_KEY environment variable is required for local agent loop")?;
-    
+
     let ai_client = GenAIClient::default();
 
     // Initial analysis prompt
@@ -89,10 +89,12 @@ pub async fn run(
     ]);
 
     println!("Thinking (Looping with context)...");
-    
+
     loop {
-        let response = ai_client.exec_chat("gemini-2.5-flash", chat_req.clone(), None).await?;
-        
+        let response = ai_client
+            .exec_chat("gemini-2.5-flash", chat_req.clone(), None)
+            .await?;
+
         if let Some(content) = response.into_first_text() {
             if content.contains("QUERY_CONTEXT:") {
                 // Extract query
@@ -103,9 +105,9 @@ pub async fn run(
                     .replace("QUERY_CONTEXT:", "")
                     .trim()
                     .to_string();
-                    
+
                 println!("Agent queried context: {}", query);
-                
+
                 // Perform actual query to Autocontext
                 use crate::types::CreateTaskRequest;
                 let req = CreateTaskRequest {
@@ -113,7 +115,7 @@ pub async fn run(
                     background: Some(false),
                     timeout_seconds: None,
                 };
-                
+
                 let context_result;
                 match _client.create_task(context_id, "retrieve", &req).await {
                     Ok(task) => {
@@ -131,9 +133,12 @@ pub async fn run(
                         context_result = format!("Error retrieving context: {}", e);
                     }
                 }
-                
+
                 chat_req = chat_req.append_message(ChatMessage::assistant(content.clone()));
-                chat_req = chat_req.append_message(ChatMessage::user(format!("Context Result:\n{}", context_result)));
+                chat_req = chat_req.append_message(ChatMessage::user(format!(
+                    "Context Result:\n{}",
+                    context_result
+                )));
             } else if content.contains("FINAL_REVIEW:") {
                 let final_review = content.replace("FINAL_REVIEW:", "").trim().to_string();
                 println!("\n=== Final Review Report ===\n");
