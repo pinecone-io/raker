@@ -59,7 +59,13 @@ enum Commands {
         /// Review only the git diff
         #[arg(long)]
         diff: bool,
+        /// Strict mode: forces a failure exit code (1) if the review is rejected
+        #[arg(long)]
+        strict: bool,
     },
+
+    /// Install the git pre-commit hook for automated reviews
+    InstallHook,
 
     /// Show the CLI version
     Version,
@@ -154,10 +160,12 @@ async fn run() -> anyhow::Result<()> {
             context_id,
             review_type,
             diff,
+            strict,
         }) => {
             let aid = config::resolve_context_id(context_id.as_deref())?;
-            commands::review::run(&aid, &path, review_type.as_deref(), diff, json).await
+            commands::review::run(&aid, &path, review_type.as_deref(), diff, strict, json).await
         }
+        Some(Commands::InstallHook) => commands::hook::install(),
         Some(Commands::Version) => {
             let version = env!("CARGO_PKG_VERSION");
             if json {

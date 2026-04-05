@@ -11,6 +11,7 @@ pub async fn run(
     path_str: &str,
     review_type: Option<&str>,
     diff: bool,
+    strict: bool,
     json: bool,
 ) -> Result<()> {
     let cfg = load_config()?;
@@ -27,8 +28,15 @@ pub async fn run(
 
     if diff {
         println!("Extracting git diff for '{}'...", path_str);
+
+        let args = if strict {
+            vec!["diff", "--cached", path_str]
+        } else {
+            vec!["diff", "HEAD", path_str]
+        };
+
         let output = std::process::Command::new("git")
-            .args(["diff", "HEAD", path_str])
+            .args(&args)
             .output()
             .context("Failed to execute git diff")?;
 
@@ -120,6 +128,12 @@ pub async fn run(
         ""
     };
 
+    let strict_instruction = if strict && !json {
+        "Because you are running in strict mode (e.g., as a Git hook), if you decide to REJECT this code due to a violation, start your final review EXACTLY with `STATUS: FAIL` and provide a concise, actionable error message that another AI coding agent can read to understand exactly how to fix the code. If the code passes, start with `STATUS: PASS`."
+    } else {
+        ""
+    };
+
     let extracted_instruction = if !extracted_symbols_text.is_empty() {
         format!("Here is a structural summary of the code you are reviewing (extracted via AST parsing):\n{}\n", extracted_symbols_text)
     } else {
@@ -135,8 +149,9 @@ pub async fn run(
         If you need to query the context for past PRs, issues, or code, output exactly: `QUERY_CONTEXT: <your query>` \
         I will then provide you the summarized JSON results of that query from the Autocontext backend. \
         Once you have enough context, output your final review starting with `FINAL_REVIEW:`\n\
+        {}\n\
         {}",
-        r_type, context_id, extracted_instruction, json_instruction
+        r_type, context_id, extracted_instruction, strict_instruction, json_instruction
     );
 
     let mut chat_req = ChatRequest::new(vec![
@@ -239,6 +254,12 @@ pub async fn run(
                 } else {
                     println!("\n=== Final Review Report ===\n");
                     println!("{}", final_review);
+                    if strict
+                        && (final_review.trim().starts_with("STATUS: FAIL")
+                            || final_review.contains("STATUS: FAIL"))
+                    {
+                        std::process::exit(1);
+                    }
                     break;
                 }
             } else {
