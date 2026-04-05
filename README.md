@@ -6,8 +6,8 @@ Raker is a powerful CLI used by AI and humans to review work against cloud-scale
 
 - **Code Review:** Org-wide Code Intelligence to help review code that aligns with the company best practices and stack. Understands every issue known so far, indexed all public repos of interest. Can alert and identify problems before they hit production.
 - **Design Review:** Check consistency of designs to stay on brand.
-- **Doc Review:** Cross Reference 1000s of documents to identify plagiarism, check facts, overlaps, style defects, etc.
-- **Security Review:** Cross Reference vulnerabilities and potential issues in unstructured environments.
+- **Doc Review:** Review 1000s of documents to identify plagiarism, check facts, overlaps, style defects, etc.
+- **Security Review:** Review vulnerabilities and potential issues in unstructured environments.
 
 ## Getting Started
 
