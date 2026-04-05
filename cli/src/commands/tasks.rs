@@ -4,6 +4,7 @@ use crate::output;
 use crate::types::*;
 use anyhow::Result;
 
+#[allow(dead_code)]
 pub async fn retrieve(
     context_id: &str,
     instruction: &str,

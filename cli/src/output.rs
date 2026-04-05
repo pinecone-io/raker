@@ -37,6 +37,7 @@ pub fn print_contexts(contexts: &[ContextWithStats], json: bool) {
     }
 }
 
+#[allow(dead_code)]
 pub fn print_task(task: &Task, json: bool) {
     if json {
         print_json(task);
