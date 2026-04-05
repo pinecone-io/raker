@@ -61,4 +61,4 @@ cargo test
 
 ## What does RAKER stand for?
 
-RAKER stands for **Retrieval Augmented Knowledge Evaluator & Reviewer**. It represents the core philosophy of this tool: an AI agent that retrieves organizational knowledge from Pinecone's cloud-scale context to intelligently evaluate and review code, designs, and documents before they enter the system.
+RAKER stands for **Retrieval Augmented Knowledge Engine & Reviewer**. It represents the core philosophy of this tool: an AI agent that retrieves organizational knowledge from Pinecone's cloud-scale context to intelligently evaluate and review code, designs, and documents before they enter the system.
